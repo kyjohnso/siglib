@@ -35,7 +35,12 @@ def frame(x, frame_length, frame_step, pad=True, pad_value=0j):
 
     Examples
     --------
-    >>>
+    >>> import numpy as np
+    >>> from siglib import frame
+    >>> x = np.arange(10)
+    >>> frame(x, 5, 5)
+    array([[0.+0.j, 1.+0.j, 2.+0.j, 3.+0.j, 4.+0.j],
+           [5.+0.j, 6.+0.j, 7.+0.j, 8.+0.j, 9.+0.j]])
     """
 
     if pad:
@@ -68,7 +73,12 @@ def closing(x, ntaps):
 
     Examples
     --------
-    >>>
+    >>> import numpy as np
+    >>> from siglib import closing
+    >>> x = np.arange(10)
+    >>> closing(x, 5)
+    array([4.+0.j, 4.+0.j, 4.+0.j, 4.+0.j, 4.+0.j, 5.+0.j, 6.+0.j, 7.+0.j,
+           8.+0.j, 9.+0.j])
     """
     x = np.concatenate([x, np.ones(ntaps - 1) * x[-1]])
     xf = frame(x, frame_length=ntaps, frame_step=1, pad=False)
@@ -97,7 +107,12 @@ def opening(x, ntaps):
 
     Examples
     --------
-    >>>
+    >>> import numpy as np
+    >>> from siglib import opening
+    >>> x = np.arange(10)
+    >>> opening(x, 5)
+    array([0.+0.j, 1.+0.j, 2.+0.j, 3.+0.j, 4.+0.j, 5.+0.j, 6.+0.j, 7.+0.j,
+           8.+0.j, 9.+0.j])
     """
     x = np.concatenate([x, np.ones(ntaps - 1) * x[-1]])
     xf = frame(x, frame_length=ntaps, frame_step=1, pad=False)
@@ -125,6 +140,12 @@ def resample(x, idx, ntaps):
 
     Example
     -------
+    >>> import numpy as np
+    >>> from siglib import resample
+    >>> x = np.arange(10**2)
+    >>> idx = np.array([45.567])
+    >>> resample(x, idx, 5)
+    array([44.96565413])
     """
     d_idx = np.ceil(np.arange(-ntaps / 2, ntaps / 2))
     idx_array = np.round(idx[:, np.newaxis]) + d_idx
