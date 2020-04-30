@@ -9,7 +9,7 @@ from siglib import frame, closing, opening, resample
     (
         (np.arange(10), 5, 5, True, 0j, np.arange(10, dtype=np.complex).reshape(2, 5)),
         (np.arange(10), 5, 5, False, 0j, np.arange(10, dtype=np.complex).reshape(2, 5)),
-    )
+    ),
 )
 def test_frame(x, frame_length, frame_step, pad, pad_value, expected):
     result = frame(x, frame_length, frame_step, pad=pad, pad_value=pad_value)
@@ -44,10 +44,8 @@ def test_opening(x, ntaps, expected):
 
 @pytest.mark.parametrize(
     "x,idx,ntaps,expected",
-    (
-        (np.arange(10**2), np.array([45.567]), 5, [44.96565413]),
-    ),
+    ((np.arange(10 ** 2), np.array([45.567]), 5, [44.96565413]),),
 )
 def test_resample(x, idx, ntaps, expected):
     result = resample(x, idx, ntaps)
-    np.testing.assert_allclose(result, expected, rtol=1E-9)
+    np.testing.assert_allclose(result, expected, rtol=1e-9)
