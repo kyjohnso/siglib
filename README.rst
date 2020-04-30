@@ -1,6 +1,11 @@
 ``siglib``
 ==========
 
+|Github|_
+
+.. |Github| image:: https://github.com/kyjohnso/siglib/workflows/Test%20siglib/badge.svg
+.. _Github: https://github.com/kyjohnso/siglib/workflows/Test%20siglib/badge.svg
+
 Installation
 ------------
 
