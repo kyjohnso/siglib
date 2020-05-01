@@ -125,20 +125,22 @@ def opening(x, ntaps):
 
 def resample(x, idx, ntaps):
     """
-    Resamples the array x to the indecies in idx using sinc interpolation with
-        ntaps number of points
+    Resamples the array x to the indicies in idx using sinc interpolation with
+    ntaps number of points
 
     Parameters
     -----------
-        x: array of shape (N,)
-        idx: array of shape (M,)
-        ntaps: integer specifying how many points to use for the sinc 
-                interpolation
+    x: array of shape (N,)
+
+    idx: array of shape (M,)
+
+    ntaps: int
+        How many points to use for the sinc interpolation
 
     Returns
     --------
-        y: array of shape (M,) containing the sinc interpolated signal at the
-            indecies idx
+    y: array of shape (M,)
+        The sinc interpolated signal at the indicies idx
 
     Example
     -------
