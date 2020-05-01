@@ -49,9 +49,8 @@ def frame(x, frame_length, frame_step, pad=True, pad_value=0j):
         x = np.concatenate([x, np.full(n_pad, pad_value)], axis=-1)
     else:
         n_frames = int(np.floor((x.shape[-1] - frame_length) / frame_step) + 1)
-    x_frame = np.array(
-        [x[i * frame_step : i * frame_step + frame_length] for i in range(n_frames)]
-    )
+    x_frame_idx = np.arange(frame_length)[None, :] + frame_step * np.arange(n_frames)[:, None]
+    x_frame = x[x_frame_idx]
     return x_frame
 
 
