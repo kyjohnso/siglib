@@ -191,5 +191,5 @@ def dcm(x, delay=1, pad=True, pad_value=1 + 0j):
     array([10.-10.j, 32.+14.j,  5. -6.j,  1. +0.j])
     """
     if pad:
-        x = np.pad(x, (0, delay), "constant", constant_values=pad_value)
+        x = np.concatenate([x, np.full(delay, pad_value)], axis=-1)
     return x[delay:] * np.conjugate(x[:-delay])
