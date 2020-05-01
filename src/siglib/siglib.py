@@ -49,6 +49,13 @@ def frame(x, frame_length, frame_step, pad=True, pad_value=0j):
         x = np.concatenate([x, np.full(n_pad, pad_value)], axis=-1)
     else:
         n_frames = int(np.floor((x.shape[-1] - frame_length) / frame_step) + 1)
+
+    # Explanation for the below:
+    # * np.arange(frame_length)[None, :] creates a row vector from [0, frame_length)
+    # * np.arange(n_frames)[:, None] creates a column vector from [0, n_frames)
+    # * multiplying by frame_step makes the sliding window slide frame_steps at a time
+    # * adding the two together gives us a n_frames x frame_length matrix,
+    #   where each row is a window
     x_frame_idx = np.arange(frame_length)[None, :] + frame_step * np.arange(n_frames)[:, None]
     x_frame = x[x_frame_idx]
     return x_frame
