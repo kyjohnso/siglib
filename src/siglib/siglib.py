@@ -158,3 +158,38 @@ def resample(x, idx, ntaps):
 
     y = np.sum(x[idx_array] * np.sinc(sinc_array), axis=-1)
     return y
+
+
+def dcm(x, delay=1, pad=True, pad_value=1 + 0j):
+    """
+    Perform a delay-conjugate-multiply on
+    some input signal ``x`` with delay ``delay``
+
+    Parameters
+    ----------
+    x : array of shape (N,)
+
+    delay : int (optional, defaults to 1)
+
+    pad : bool (optional, defaults to True)
+        Whether or not to pad the right end of ``x``
+
+    pad_value : complex (optional, defaults to 1+0j)
+        If ``pad`` is True, this is the value that should be used to pad.
+        Note: defaults to ``1+0j`` to avoid issues in subsequent ``np.atan2``.
+
+    Returns
+    -------
+    y : array of shape (N,)
+        Delay-conjugate-multiply result
+
+    Example
+    -------
+    >>> from siglib import dcm
+    >>> x = np.array([1 + 3j, 4 + 2j, 5 + 6j, 1 + 0j])
+    >>> dcm(x)
+    array([10.-10.j, 32.+14.j,  5. -6.j,  1. +0.j])
+    """
+    if pad:
+        x = np.pad(x, (0, delay), "constant", constant_values=pad_value)
+    return x[delay:] * np.conjugate(x[:-delay])

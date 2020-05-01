@@ -1,7 +1,7 @@
 #!/usr/bin/env pytest
 import numpy as np
 import pytest
-from siglib import frame, closing, opening, resample
+from siglib import dcm, frame, closing, opening, resample
 
 
 @pytest.mark.parametrize(
@@ -49,3 +49,29 @@ def test_opening(x, ntaps, expected):
 def test_resample(x, idx, ntaps, expected):
     result = resample(x, idx, ntaps)
     np.testing.assert_allclose(result, expected, rtol=1e-9)
+
+
+@pytest.mark.parametrize(
+    "x,delay,pad,pad_value,expected",
+    (
+        (
+            [1 + 3j, 4 + 2j, 5 + 6j, 1 + 0j],
+            1,
+            True,
+            1 + 0j,
+            [10 - 10j, 32 + 14j, 5.0 - 6j, 1.0 + 0j],
+        ),
+        (
+            [1 + 3j, 4 + 2j, 5 + 6j, 1 + 0j],
+            1,
+            False,
+            1 + 0j,
+            [10 - 10j, 32 + 14j, 5.0 - 6j],
+        ),
+    ),
+)
+def test_dcm(x, delay, pad, pad_value, expected):
+    x = np.array(x)
+    result = dcm(x, delay, pad=pad, pad_value=pad_value)
+    expected = np.array(expected)
+    np.testing.assert_equal(result, expected)
