@@ -87,6 +87,22 @@ def opening(x, ntaps):
 
 
 def resample(x, idx, ntaps):
+    """
+    Resamples the array x to the indecies in idx using sinc interpolation with
+        ntaps number of points
+
+    Parameters
+    -----------
+        x: array of shape (N,)
+        idx: array of shape (M,)
+        ntaps: integer specifying how many points to use for the sinc 
+                interpolation
+
+    Returns
+    --------
+        y: array of shape (M,) containing the sinc interpolated signal at the
+            indecies idx
+    """
     d_idx = np.ceil(np.arange(-ntaps / 2, ntaps / 2))
     idx_array = np.round(idx[:, np.newaxis]) + d_idx
     idx_array = np.asarray(idx_array, dtype=np.int32)
