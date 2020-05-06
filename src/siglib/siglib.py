@@ -227,6 +227,7 @@ def overlapsave(x, H, step):
 
     Example
     -------
+    >>> from siglib import overlapsave
     >>> x = array([ 0.+3.j, -4.+2.j, -4.+1.j, -5.+2.j, -4.-3.j,  2.+1.j, 
                    -1.-2.j,  3.+3.j, -3.-1.j, -3.+2.j, -4.+0.j, -4.-4.j, 
                    -3.-4.j, -4.-3.j, -4.+3.j, -3.+4.j, -4.-1.j, -5.+0.j,  
@@ -272,3 +273,26 @@ def overlapsave(x, H, step):
     xh = np.reshape(xh, (H.shape[0], xh.shape[-1] * xh.shape[-2]))
     xh = xh[:, :N]
     return xh
+
+
+def hamming(N):
+    """
+    A simple hamming window generator, I know, I know it is in scipy.signal
+    with a bunch more OO windows and such but I just wanted something simple
+
+    Parameters
+    ----------
+    N : integer length of the window
+
+    Returns
+    -------
+    h : array of shape (N,) that contains the coeficients of the Hamming window
+
+    Example
+    -------
+    >>> from siglib import hamming
+    >>> hamming(5)
+    array([0.08, 0.54, 1.  , 0.54, 0.08])
+    """
+    n = np.arange(0, N)
+    return 0.54 - 0.46 * np.cos(2 * np.pi * n / (N - 1))
