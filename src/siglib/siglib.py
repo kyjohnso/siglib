@@ -219,30 +219,31 @@ def overlapsave(x, H, step):
     ----------
     x : array of shape (N,)
 
-    H : array of shape (L,M,) where the rows are zero padded and Fourier 
-            Transformed filters. There are L different filters each of length 
-            M << N. M specifies the length of the frames into which x is broken.
+    H : array of shape (L,M,)
+        The rows are zero padded and Fourier  Transformed filters. There are L
+        different filters each of length M << N. M specifies the length of the
+        frames into which x is broken.
 
-    step : an integer that specifies what the step is for each of the frame
+    step : int
+        Specifies what the step is for each of the frame
 
     Returns
     -------
-    xh : array of shape (L,N+M-step,) where each row is the convolution of x
-            with the respective filter in H. 
+    xh : array of shape (L,N+M-step,)
+        Each row is the convolution of x with the respective filter in H.
 
     Example
     -------
     >>> from siglib import overlapsave
-    >>> x = array([ 0.+3.j, -4.+2.j, -4.+1.j, -5.+2.j, -4.-3.j,  2.+1.j, 
-                   -1.-2.j,  3.+3.j, -3.-1.j, -3.+2.j, -4.+0.j, -4.-4.j, 
-                   -3.-4.j, -4.-3.j, -4.+3.j, -3.+4.j, -4.-1.j, -5.+0.j,  
-                    4.+2.j,  2.-3.j])
+    >>> x = np.array([ 0.+3.j, -4.+2.j, -4.+1.j, -5.+2.j, -4.-3.j,  2.+1.j,
+                      -1.-2.j,  3.+3.j, -3.-1.j, -3.+2.j, -4.+0.j, -4.-4.j,
+                      -3.-4.j, -4.-3.j, -4.+3.j, -3.+4.j, -4.-1.j, -5.+0.j,
+                       4.+2.j,  2.-3.j])
     >>> h = np.array([-4.+4.j, -4.+3.j])
     >>> overlap = h.shape[-1] - 1
     >>> len_fft = int(2**(np.ceil(np.log2(8 * overlap))))
     >>> H = np.fft.fft(np.concatenate([h,np.zeros(len_fft-h.shape[-1])]))
     >>> step = H.shape[-1] - overlap
-    >>> 
     >>> overlapsave(x,H,step)
     array([[-12.-12.j,  -1.-36.j,  22.-40.j,  25.-44.j,  42.-27.j,  13. +4.j,
           1. +6.j, -14. +5.j,  -5.-11.j,  19.-25.j,  22.-33.j,  48.-12.j,
@@ -280,18 +281,21 @@ def overlapsave(x, H, step):
     return xh
 
 
-def hamming(N):
+@numba.njit(fastmath=True)
+def hamming(window_length):
     """
     A simple hamming window generator, I know, I know it is in scipy.signal
     with a bunch more OO windows and such but I just wanted something simple
 
     Parameters
     ----------
-    N : integer length of the window
+    window_length : int
+        Length of the window
 
     Returns
     -------
-    h : array of shape (N,) that contains the coeficients of the Hamming window
+    h : array of shape (N,)
+        Contains the coeficients of the Hamming window
 
     Example
     -------
@@ -299,5 +303,5 @@ def hamming(N):
     >>> hamming(5)
     array([0.08, 0.54, 1.  , 0.54, 0.08])
     """
-    n = np.arange(0, N)
-    return 0.54 - 0.46 * np.cos(2 * np.pi * n / (N - 1))
+    n = np.arange(0, window_length)
+    return 0.54 - 0.46 * np.cos(2 * np.pi * n / (window_length - 1))
