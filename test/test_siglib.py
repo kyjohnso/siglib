@@ -1,8 +1,7 @@
 #!/usr/bin/env pytest
 import numpy as np
 import pytest
-from siglib import dcm, frame, closing, opening, resample, overlapsave, hamming
-
+import siglib as sl
 
 @pytest.mark.parametrize(
     "x,frame_length,frame_step,pad,pad_value,expected",
@@ -12,7 +11,7 @@ from siglib import dcm, frame, closing, opening, resample, overlapsave, hamming
     ),
 )
 def test_frame(x, frame_length, frame_step, pad, pad_value, expected):
-    result = frame(x, frame_length, frame_step, pad=pad, pad_value=pad_value)
+    result = sl.frame(x, frame_length, frame_step, pad=pad, pad_value=pad_value)
     np.testing.assert_equal(result, expected)
 
 
@@ -24,7 +23,7 @@ def test_frame(x, frame_length, frame_step, pad, pad_value, expected):
     ),
 )
 def test_closing(x, ntaps, expected):
-    result = closing(x, ntaps)
+    result = sl.closing(x, ntaps)
     expected = np.array(expected, dtype=np.complex)
     np.testing.assert_equal(result, expected)
 
@@ -37,7 +36,7 @@ def test_closing(x, ntaps, expected):
     ),
 )
 def test_opening(x, ntaps, expected):
-    result = opening(x, ntaps)
+    result = sl.opening(x, ntaps)
     expected = np.array(expected, dtype=np.complex)
     np.testing.assert_equal(result, expected)
 
@@ -47,7 +46,7 @@ def test_opening(x, ntaps, expected):
     ((np.arange(10 ** 2), np.array([45.567]), 5, [44.96565413]),),
 )
 def test_resample(x, idx, ntaps, expected):
-    result = resample(x, idx, ntaps)
+    result = sl.resample(x, idx, ntaps)
     np.testing.assert_allclose(result, expected, rtol=1e-9)
 
 
@@ -72,7 +71,7 @@ def test_resample(x, idx, ntaps, expected):
 )
 def test_dcm(x, delay, pad, pad_value, expected):
     x = np.array(x)
-    result = dcm(x, delay, pad=pad, pad_value=pad_value)
+    result = sl.dcm(x, delay, pad=pad, pad_value=pad_value)
     expected = np.array(expected)
     np.testing.assert_equal(result, expected)
 
@@ -298,7 +297,7 @@ def test_dcm(x, delay, pad, pad_value, expected):
     ),
 )
 def test_overlapsave(x, H, step, expected):
-    result = overlapsave(np.array(x), np.array(H), step)
+    result = sl.overlapsave(np.array(x), np.array(H), step)
     expected = np.array(expected)
     np.testing.assert_almost_equal(result, expected)
 
@@ -415,6 +414,6 @@ def test_overlapsave(x, H, step, expected):
     ),
 )
 def test_hamming(N, expected):
-    result = hamming(N)
+    result = sl.hamming(N)
     expected = np.array(expected)
     np.testing.assert_almost_equal(result, expected)
