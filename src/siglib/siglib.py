@@ -56,7 +56,9 @@ def frame(x, frame_length, frame_step, pad=True, pad_value=0j):
     # * multiplying by frame_step makes the sliding window slide frame_steps at a time
     # * adding the two together gives us a n_frames x frame_length matrix,
     #   where each row is a window
-    x_frame_idx = np.arange(frame_length)[None, :] + frame_step * np.arange(n_frames)[:, None]
+    x_frame_idx = (
+        np.arange(frame_length)[None, :] + frame_step * np.arange(n_frames)[:, None]
+    )
     x_frame = x[x_frame_idx]
     return x_frame
 
@@ -199,3 +201,74 @@ def dcm(x, delay=1, pad=True, pad_value=1 + 0j):
     if pad:
         x = np.concatenate([x, np.full(delay, pad_value)], axis=-1)
     return x[delay:] * np.conjugate(x[:-delay])
+
+
+def overlapsave(x, H, step):
+    """
+    Perform convolution of the 1D array x with a bank of fourier domain filters
+    H. The convolution is done (as you might expect) by the overlapsave method.
+    I know I could have the zero pad and fourier operations to get to H in this
+    function, but this way you have to know a little about what you are doing.
+
+    Parameters
+    ----------
+    x : array of shape (N,)
+
+    H : array of shape (L,M,) where the rows are zero padded and Fourier 
+            Transformed filters. There are L different filters each of length 
+            M << N. M specifies the length of the frames into which x is broken.
+
+    step : an integer that specifies what the step is for each of the frame
+
+    Returns
+    -------
+    xh : array of shape (L,N+M-step,) where each row is the convolution of x
+            with the respective filter in H. 
+
+    Example
+    -------
+    >>> x = array([ 0.+3.j, -4.+2.j, -4.+1.j, -5.+2.j, -4.-3.j,  2.+1.j, 
+                   -1.-2.j,  3.+3.j, -3.-1.j, -3.+2.j, -4.+0.j, -4.-4.j, 
+                   -3.-4.j, -4.-3.j, -4.+3.j, -3.+4.j, -4.-1.j, -5.+0.j,  
+                    4.+2.j,  2.-3.j])
+    >>> h = np.array([-4.+4.j, -4.+3.j])
+    >>> overlap = h.shape[-1] - 1
+    >>> len_fft = int(2**(np.ceil(np.log2(8 * overlap))))
+    >>> H = np.fft.fft(np.concatenate([h,np.zeros(len_fft-h.shape[-1])]))
+    >>> step = H.shape[-1] - overlap
+    >>> 
+    >>> overlapsave(x,H,step)
+    array([[-12.-12.j,  -1.-36.j,  22.-40.j,  25.-44.j,  42.-27.j,  13. +4.j,
+          1. +6.j, -14. +5.j,  -5.-11.j,  19.-25.j,  22.-33.j,  48.-12.j,
+         56. +8.j,  52. +3.j,  29.-28.j,   3.-52.j,  20.-37.j,  39.-28.j,
+         -4. -7.j, -18.+24.j,   1.+18.j]])
+    """
+    # lets accept a 1D, 2D, or 3D H, in the first two cases we need to add a
+    #   dimension for the array broadcasting in the X * H operation
+    if H.ndim == 1:
+        H = H[np.newaxis, np.newaxis, :]
+    elif H.ndim == 2:
+        H = H[:, np.newaxis, :]
+
+    overlap = H.shape[-1] - step
+
+    # since we will drop the first overlap samples in each row, lets zero pad
+    #   x by the overlap value, this will also make it so that the output
+    #   matches that of scipy.signal
+    x = np.concatenate([np.zeros(overlap), x], axis=-1)
+
+    N = x.shape[-1]
+
+    x = frame(x, H.shape[-1], step, pad=True, pad_value=0j)
+    X = np.fft.fft(x, axis=-1)
+    XH = X * H
+    xh = np.fft.ifft(XH, axis=-1)
+
+    # for each row and for each filter take from index overlap till the end
+    xh = xh[:, :, overlap:]
+
+    # now reshape to get L rows and then drop the padding that happend at the
+    # end during the frame operation
+    xh = np.reshape(xh, (H.shape[0], xh.shape[-1] * xh.shape[-2]))
+    xh = xh[:, :N]
+    return xh
