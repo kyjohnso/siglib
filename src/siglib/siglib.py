@@ -220,7 +220,7 @@ def overlapsave(x, H, step):
     x : array of shape (N,)
 
     H : array of shape (L,M,)
-        The rows are zero padded and Fourier  Transformed filters. There are L
+        The rows are zero padded and Fourier Transformed filters. There are L
         different filters each of length M << N. M specifies the length of the
         frames into which x is broken.
 
@@ -229,22 +229,22 @@ def overlapsave(x, H, step):
 
     Returns
     -------
-    xh : array of shape (L,N+M-step,)
+    xh : array of shape (L, N+M-step,)
         Each row is the convolution of x with the respective filter in H.
 
     Example
     -------
     >>> from siglib import overlapsave
     >>> x = np.array([ 0.+3.j, -4.+2.j, -4.+1.j, -5.+2.j, -4.-3.j,  2.+1.j,
-                      -1.-2.j,  3.+3.j, -3.-1.j, -3.+2.j, -4.+0.j, -4.-4.j,
-                      -3.-4.j, -4.-3.j, -4.+3.j, -3.+4.j, -4.-1.j, -5.+0.j,
-                       4.+2.j,  2.-3.j])
+    ...               -1.-2.j,  3.+3.j, -3.-1.j, -3.+2.j, -4.+0.j, -4.-4.j,
+    ...               -3.-4.j, -4.-3.j, -4.+3.j, -3.+4.j, -4.-1.j, -5.+0.j,
+    ...                4.+2.j,  2.-3.j])
     >>> h = np.array([-4.+4.j, -4.+3.j])
     >>> overlap = h.shape[-1] - 1
     >>> len_fft = int(2**(np.ceil(np.log2(8 * overlap))))
-    >>> H = np.fft.fft(np.concatenate([h,np.zeros(len_fft-h.shape[-1])]))
+    >>> H = np.fft.fft(np.concatenate([h, np.zeros(len_fft - h.shape[-1])]))
     >>> step = H.shape[-1] - overlap
-    >>> overlapsave(x,H,step)
+    >>> overlapsave(x, H, step)
     array([[-12.-12.j,  -1.-36.j,  22.-40.j,  25.-44.j,  42.-27.j,  13. +4.j,
           1. +6.j, -14. +5.j,  -5.-11.j,  19.-25.j,  22.-33.j,  48.-12.j,
          56. +8.j,  52. +3.j,  29.-28.j,   3.-52.j,  20.-37.j,  39.-28.j,
