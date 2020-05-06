@@ -303,7 +303,7 @@ def test_overlapsave(x, H, step, expected):
 
 
 @pytest.mark.parametrize(
-    "N,expected",
+    "window_length,expected",
     (
         (4, [0.08, 0.77, 0.77, 0.08],),
         (5, [0.08, 0.54, 1.0, 0.54, 0.08],),
@@ -413,7 +413,7 @@ def test_overlapsave(x, H, step, expected):
         ),
     ),
 )
-def test_hamming(N, expected):
-    result = sl.hamming(N)
+def test_hamming(window_length, expected):
+    result = sl.hamming(window_length)
     expected = np.array(expected)
     np.testing.assert_almost_equal(result, expected)
