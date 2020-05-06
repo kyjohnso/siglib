@@ -1,5 +1,9 @@
 #!/usr/bin/env python
+import numba
 import numpy as np
+
+
+__all__ = ["frame", "closing", "opening", "resample", "dcm", "overlapsave", "hamming"]
 
 
 def frame(x, frame_length, frame_step, pad=True, pad_value=0j):
@@ -42,7 +46,6 @@ def frame(x, frame_length, frame_step, pad=True, pad_value=0j):
     array([[0.+0.j, 1.+0.j, 2.+0.j, 3.+0.j, 4.+0.j],
            [5.+0.j, 6.+0.j, 7.+0.j, 8.+0.j, 9.+0.j]])
     """
-
     if pad:
         n_frames = int(np.ceil((x.shape[-1] - frame_length) / frame_step) + 1)
         n_pad = int((n_frames - 1) * frame_step + frame_length - x.shape[-1])
@@ -51,16 +54,15 @@ def frame(x, frame_length, frame_step, pad=True, pad_value=0j):
         n_frames = int(np.floor((x.shape[-1] - frame_length) / frame_step) + 1)
 
     # Explanation for the below:
-    # * np.arange(frame_length)[None, :] creates a row vector from [0, frame_length)
-    # * np.arange(n_frames)[:, None] creates a column vector from [0, n_frames)
+    # * ``np.arange(frame_length).reshape(1, -1)`` creates a row vector from [0, frame_length)
+    # * ``np.arange(n_frames).reshape(-1, 1)`` creates a column vector from [0, n_frames)
     # * multiplying by frame_step makes the sliding window slide frame_steps at a time
     # * adding the two together gives us a n_frames x frame_length matrix,
     #   where each row is a window
-    x_frame_idx = (
-        np.arange(frame_length)[None, :] + frame_step * np.arange(n_frames)[:, None]
-    )
-    x_frame = x[x_frame_idx]
-    return x_frame
+    x_frame_idx = np.arange(frame_length).reshape(1, -1) + frame_step * np.arange(
+        n_frames
+    ).reshape(-1, 1)
+    return x[x_frame_idx]
 
 
 def closing(x, ntaps):
@@ -168,6 +170,7 @@ def resample(x, idx, ntaps):
     return y
 
 
+@numba.njit(fastmath=True)
 def dcm(x, delay=1, pad=True, pad_value=1 + 0j):
     """
     Perform a delay-conjugate-multiply on
@@ -199,8 +202,10 @@ def dcm(x, delay=1, pad=True, pad_value=1 + 0j):
     array([10.-10.j, 32.+14.j,  5. -6.j,  1. +0.j])
     """
     if pad:
-        x = np.concatenate([x, np.full(delay, pad_value)], axis=-1)
-    return x[delay:] * np.conjugate(x[:-delay])
+        x_pad = np.concatenate((x, np.full(delay, pad_value)), axis=-1)
+        return x_pad[delay:] * np.conjugate(x_pad[:-delay])
+    else:
+        return x[delay:] * np.conjugate(x[:-delay])
 
 
 def overlapsave(x, H, step):
