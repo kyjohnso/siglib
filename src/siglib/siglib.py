@@ -94,7 +94,7 @@ def closing(x, ntaps):
     xf = frame(x, frame_length=ntaps, frame_step=1, pad=False)
     d = np.max(xf, axis=-1)
     d = np.concatenate([np.ones(ntaps - 1) * d[0], d])
-    df = frame(np.flip(d), frame_length=ntaps, frame_step=1)
+    df = frame(np.flip(d), frame_length=ntaps, frame_step=1, pad=False)
     c = np.min(df, axis=-1)
     return np.flip(c)
 
@@ -128,7 +128,7 @@ def opening(x, ntaps):
     xf = frame(x, frame_length=ntaps, frame_step=1, pad=False)
     e = np.min(xf, axis=-1)
     e = np.concatenate([np.ones(ntaps - 1) * e[0], e])
-    ef = frame(np.flip(e), frame_length=ntaps, frame_step=1)
+    ef = frame(np.flip(e), frame_length=ntaps, frame_step=1, pad=False)
     o = np.max(ef, axis=-1)
     return np.flip(o)
 
