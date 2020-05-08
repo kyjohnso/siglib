@@ -1,7 +1,7 @@
 ``siglib``
 ==========
 
-|Pip|_ |Prs|_ |Github|_
+|Pip|_ |Prs|_ |Github|_ |MIT|_
 
 .. |Pip| image:: https://badge.fury.io/py/siglib.svg
 .. _Pip: https://badge.fury.io/py/siglib
@@ -11,6 +11,9 @@
 
 .. |Github| image:: https://github.com/kyjohnso/siglib/workflows/Test%20siglib/badge.svg
 .. _Github: https://github.com/kyjohnso/siglib/workflows/Test%20siglib/badge.svg
+
+.. |MIT| image:: https://img.shields.io/badge/License-MIT-yellow.svg
+.. _MIT: https://opensource.org/licenses/MIT
 
 Installation
 ------------
