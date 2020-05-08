@@ -24,12 +24,12 @@ With ``pip``, run::
 
 You can install ``siglib`` directly from GitHub::
 
-    pip install git+git://github.com/kyjohnso/siglib
+    python -m pip install git+git://github.com/kyjohnso/siglib
 
 or clone the repo and run the install::
 
     git clone git@github.com:kyjohnso/siglib.git
-    cd siglib && pip install -e .
+    cd siglib && python -m pip install -e .
 
 Testing
 -------
@@ -41,6 +41,6 @@ To test, from the root directory run::
 Alternatively, from within an active virtual
 environment, run::
 
-    pip install -e .
+    python -m pip install -e .
     python -m pytest
 
