@@ -260,8 +260,8 @@ def overlapsave(x, H, step):
     overlap = H.shape[-1] - step
 
     # since we will drop the first overlap samples in each row, lets zero pad
-    #   x by the overlap value, this will also make it so that the output
-    #   matches that of scipy.signal
+    # x by the overlap value, this will also make it so that the output
+    # matches that of scipy.signal
     x = np.concatenate([np.zeros(overlap), x], axis=-1)
 
     N = x.shape[-1]
